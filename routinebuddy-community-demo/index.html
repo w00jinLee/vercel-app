@@ -1,0 +1,849 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>루틴버디 | 공부는 사용자가 하고, 생활은 서비스가 챙겨준다</title>
+  <style>
+    :root {
+      --surface: rgba(255, 255, 255, 0.82);
+      --line: rgba(21, 74, 48, 0.12);
+      --text: #183428;
+      --muted: #5d7668;
+      --primary: #2d9d63;
+      --primary-deep: #1d7a4b;
+      --accent: #ff8b5e;
+      --shadow: 0 24px 70px rgba(50, 97, 66, 0.14);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --max-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 214, 107, 0.4), transparent 28%),
+        radial-gradient(circle at top right, rgba(91, 167, 255, 0.22), transparent 26%),
+        linear-gradient(180deg, #f8fcf8 0%, #eff7ef 48%, #f8fbf7 100%);
+      color: var(--text);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(45, 157, 99, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(45, 157, 99, 0.035) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 80%);
+      z-index: -1;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(calc(100% - 32px), var(--max-width)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(248, 252, 248, 0.72);
+      border-bottom: 1px solid rgba(21, 74, 48, 0.08);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(145deg, var(--primary), #69bf7d);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .topnav {
+      display: flex;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero { padding: 44px 0 32px; }
+
+    .hero-grid,
+    .grid-2,
+    .rank-layout {
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 28px; }
+    .grid-2 { grid-template-columns: 1.12fr 0.88fr; }
+    .rank-layout { grid-template-columns: 1.05fr 0.95fr; }
+
+    .hero-copy,
+    .hero-panel,
+    .card,
+    .timeline,
+    .feature-card,
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      border-radius: var(--radius-lg);
+    }
+
+    .hero-copy {
+      border-radius: var(--radius-xl);
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 214, 107, 0.7), rgba(255, 214, 107, 0));
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(45, 157, 99, 0.1);
+      color: var(--primary-deep);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      margin-top: 20px;
+      font-size: clamp(2.4rem, 4.5vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      max-width: 10ch;
+    }
+
+    .hero-copy p {
+      margin-top: 18px;
+      max-width: 56ch;
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.7;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 0 22px;
+      border-radius: 18px;
+      border: 1px solid transparent;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--primary), #55b970);
+      color: white;
+      box-shadow: 0 16px 32px rgba(45, 157, 99, 0.25);
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.6);
+      border-color: rgba(21, 74, 48, 0.12);
+    }
+
+    .hero-metrics,
+    .mini-feed,
+    .routine-list,
+    .schedule-list,
+    .features-grid,
+    .stats-grid,
+    .ranking-board,
+    .timeline-list,
+    .progress-chart { display: grid; gap: 14px; }
+
+    .hero-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 30px; }
+    .routine-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .features-grid,
+    .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .metric,
+    .routine-item,
+    .schedule-item,
+    .timeline-item,
+    .ranking-item,
+    .mini-feed-item {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(21, 74, 48, 0.08);
+    }
+
+    .metric strong,
+    .study-focus strong {
+      display: block;
+      letter-spacing: -0.05em;
+    }
+
+    .metric strong { font-size: 1.5rem; }
+    .metric span,
+    .timeline-meta,
+    .mini-feed-item span { color: var(--muted); font-size: 0.92rem; }
+
+    .hero-panel,
+    .card,
+    .timeline,
+    .feature-card,
+    .stat-card,
+    .progress-card { padding: 24px; }
+
+    .panel-top,
+    .section-head,
+    .routine-top,
+    .schedule-top,
+    .stat-top,
+    .study-focus {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .badge,
+    .status-pill,
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .badge { background: rgba(255, 214, 107, 0.28); color: #8d6600; }
+    .status-done { background: rgba(59, 187, 114, 0.14); color: #17834c; }
+    .status-pending { background: rgba(255, 214, 107, 0.2); color: #946400; }
+    .status-soon { background: rgba(91, 167, 255, 0.16); color: #235ea7; }
+    .chip { background: rgba(45, 157, 99, 0.08); color: var(--primary-deep); font-weight: 600; }
+
+    .study-card {
+      background: linear-gradient(145deg, #1b392d, #27533c);
+      color: white;
+      padding: 20px;
+      border-radius: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .study-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -32px -46px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 214, 107, 0.35), rgba(255, 214, 107, 0));
+    }
+
+    .study-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #7ff1a6;
+      box-shadow: 0 0 0 8px rgba(127, 241, 166, 0.12);
+    }
+
+    .study-focus { margin-top: 14px; align-items: flex-end; }
+    .study-focus strong { font-size: 2.4rem; margin-top: 10px; }
+    .study-focus span { color: rgba(255, 255, 255, 0.72); font-size: 0.92rem; }
+
+    .mini-feed-item,
+    .timeline-item,
+    .ranking-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .avatar,
+    .thumb,
+    .icon-wrap,
+    .rank-badge {
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(135deg, #68b0ff, #3bbb72);
+    }
+
+    .thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 214, 107, 0.9), rgba(255, 139, 94, 0.95));
+      color: white;
+      font-size: 1.15rem;
+    }
+
+    main { padding-bottom: 72px; }
+    section { padding: 20px 0; }
+
+    .section-head { margin-bottom: 18px; align-items: end; }
+    .section-head h2 { font-size: clamp(1.45rem, 2.4vw, 2.2rem); letter-spacing: -0.05em; }
+    .section-head p,
+    .routine-item p,
+    .schedule-item p,
+    .feature-card p,
+    .stat-card p,
+    .ranking-item p { color: var(--muted); line-height: 1.6; }
+
+    .routine-item strong,
+    .schedule-item strong,
+    .feature-card strong,
+    .stat-card strong,
+    .ranking-item strong { font-size: 1.03rem; letter-spacing: -0.03em; }
+
+    .routine-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+    .schedule-item { background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(246, 251, 246, 0.92)); }
+
+    .schedule-row {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .time-box {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #eff7f0;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-align: center;
+    }
+
+    .timeline-item {
+      align-items: start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-item::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--primary), rgba(59, 187, 114, 0.12));
+    }
+
+    .timeline-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+
+    .timeline-user { font-weight: 800; color: var(--text); }
+
+    .timeline-comment {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(45, 157, 99, 0.08);
+      color: var(--primary-deep);
+      font-size: 0.92rem;
+    }
+
+    .icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      background: linear-gradient(145deg, rgba(45, 157, 99, 0.18), rgba(91, 167, 255, 0.18));
+      color: var(--primary-deep);
+    }
+
+    .rank-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #ffba5f);
+    }
+
+    .progress-card {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, #1e4331, #285740);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 68px 1fr 44px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ffd66b, #7ff1a6);
+    }
+
+    .footer { padding: 30px 0 44px; color: var(--muted); font-size: 0.92rem; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 650ms ease forwards;
+    }
+
+    .reveal.delay-1 { animation-delay: 80ms; }
+    .reveal.delay-2 { animation-delay: 160ms; }
+    .reveal.delay-3 { animation-delay: 240ms; }
+    .reveal.delay-4 { animation-delay: 320ms; }
+
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .grid-2,
+      .rank-layout,
+      .features-grid,
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner,
+      .section-head,
+      .study-focus,
+      .panel-top,
+      .routine-top,
+      .schedule-top,
+      .stat-top { flex-direction: column; }
+
+      .topnav { display: none; }
+      .hero-copy,
+      .hero-panel,
+      .card,
+      .timeline,
+      .feature-card,
+      .stat-card,
+      .progress-card { padding: 20px; }
+
+      .routine-list,
+      .hero-metrics,
+      .features-grid,
+      .stats-grid,
+      .schedule-row,
+      .timeline-item,
+      .mini-feed-item,
+      .ranking-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a href="#hero" class="brand" aria-label="루틴버디 홈">
+        <span class="brand-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 5.5C7 4.67 7.67 4 8.5 4H15.5C16.33 4 17 4.67 17 5.5V7.5C17 8.33 16.33 9 15.5 9H8.5C7.67 9 7 8.33 7 7.5V5.5Z" fill="currentColor"/>
+            <path d="M5 12.5C5 11.67 5.67 11 6.5 11H17.5C18.33 11 19 11.67 19 12.5V18.5C19 19.33 18.33 20 17.5 20H6.5C5.67 20 5 19.33 5 18.5V12.5Z" fill="currentColor" opacity=".9"/>
+          </svg>
+        </span>
+        <span>루틴버디</span>
+      </a>
+      <nav class="topnav">
+        <a href="#routine">오늘의 루틴</a>
+        <a href="#schedule">생활 일정</a>
+        <a href="#timeline">커뮤니티</a>
+        <a href="#stats">통계</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero" id="hero">
+      <div class="hero-grid">
+        <article class="hero-copy reveal">
+          <span class="eyebrow">공부는 사용자가 하고, 생활은 서비스가 챙겨준다</span>
+          <h1>몰입은 지키고 루틴은 놓치지 않는 공부 생활 파트너</h1>
+          <p>
+            루틴버디는 공부에 몰입하느라 빨래, 산책, 영양제, 생활 소모품 확인을 자꾸 미루게 되는 사용자를 위한
+            커뮤니티형 생활 관리 서비스입니다. 오늘의 생활 미션과 일정, 친구들의 실시간 실천 타임라인까지 한 화면에서 보여줘
+            혼자서도 흐트러지지 않는 생활 리듬을 만들어줍니다.
+          </p>
+          <div class="cta-row">
+            <a class="button button-primary" href="#routine">오늘의 생활 루틴 보기</a>
+            <a class="button button-secondary" href="#timeline">실시간 타임라인 둘러보기</a>
+          </div>
+          <div class="hero-metrics" id="heroMetrics"></div>
+        </article>
+
+        <aside class="hero-panel reveal delay-1">
+          <div class="panel-top">
+            <div>
+              <h3>오늘의 케어 보드</h3>
+              <p style="margin-top: 6px; color: var(--muted);">사용자는 공부에 집중 중, 생활 미션은 루틴버디가 추적 중입니다.</p>
+            </div>
+            <span class="badge">실시간 관리 중</span>
+          </div>
+          <div class="study-card">
+            <div class="study-status">
+              <span class="dot"></span>
+              <span>집중 세션 진행 중</span>
+            </div>
+            <div class="study-focus">
+              <div>
+                <span>현재 집중 시간</span>
+                <strong>02:35</strong>
+              </div>
+              <div>
+                <span>자동 케어 알림</span>
+                <strong style="font-size: 1.7rem;">4개</strong>
+              </div>
+            </div>
+          </div>
+          <div class="mini-feed" id="miniFeed"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="routine">
+      <div class="section-head reveal">
+        <div>
+          <h2>오늘의 생활 루틴</h2>
+          <p>영양제, 산책, 세탁, 물건 보충 확인까지. 공부 흐름을 깨지 않으면서도 꼭 챙겨야 할 생활 미션을 보기 좋은 카드로 정리했습니다.</p>
+        </div>
+      </div>
+      <div class="card reveal delay-1"><div class="routine-list" id="routineList"></div></div>
+    </section>
+
+    <section id="schedule">
+      <div class="section-head reveal">
+        <div>
+          <h2>생활 일정 관리</h2>
+          <p>캘린더를 복잡하게 열지 않아도 세탁, 건조, 물건 보충 같은 반복 생활 일정을 한눈에 파악할 수 있도록 구성했습니다.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card reveal delay-1"><div class="schedule-list" id="scheduleList"></div></div>
+        <div class="card reveal delay-2">
+          <div class="section-head" style="margin-bottom: 16px;">
+            <div>
+              <h2 style="font-size: 1.35rem;">생활 상태 요약</h2>
+              <p>지금 가장 먼저 챙겨야 할 생활 신호를 모아 보여줍니다.</p>
+            </div>
+          </div>
+          <div class="schedule-list" id="statusCards"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline">
+      <div class="section-head reveal">
+        <div>
+          <h2>실시간 커뮤니티 타임라인</h2>
+          <p>게임 알림처럼 빠르게 올라오는 생활 실천 피드로 다른 사용자들의 루틴 실행 장면을 보고 자연스럽게 동기부여를 받을 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="timeline reveal delay-1"><div class="timeline-list" id="timelineList"></div></div>
+    </section>
+
+    <section id="features">
+      <div class="section-head reveal">
+        <div>
+          <h2>서비스 특징</h2>
+          <p>단순한 할 일 앱이 아니라 생활 리듬을 유지하게 돕는 커뮤니티형 루틴 경험을 중심으로 설계했습니다.</p>
+        </div>
+      </div>
+      <div class="features-grid" id="featureList"></div>
+    </section>
+
+    <section id="stats">
+      <div class="section-head reveal">
+        <div>
+          <h2>이번 주 랭킹과 통계</h2>
+          <p>완료 횟수, 활동량, 실천 상위 사용자까지 데모용 더미 데이터를 기반으로 실제 서비스 대시보드처럼 구성했습니다.</p>
+        </div>
+      </div>
+      <div class="stats-grid reveal" id="statList"></div>
+      <div class="rank-layout" style="margin-top: 22px;">
+        <div class="card reveal delay-1">
+          <div class="section-head" style="margin-bottom: 16px;">
+            <div>
+              <h2 style="font-size: 1.35rem;">주간 루틴 랭킹</h2>
+              <p>생활 미션을 가장 꾸준히 실천한 사용자 순위입니다.</p>
+            </div>
+          </div>
+          <div class="ranking-board" id="rankingList"></div>
+        </div>
+        <div class="progress-card reveal delay-2">
+          <h2 style="font-size: 1.55rem; letter-spacing: -0.05em;">오늘 전체 실천 현황</h2>
+          <p style="margin-top: 10px; color: rgba(255,255,255,0.76); line-height: 1.65;">
+            산책, 영양제, 세탁, 보충 확인이 커뮤니티 전체에서 얼마나 실행됐는지 한 번에 확인할 수 있습니다.
+          </p>
+          <div class="progress-chart" id="progressChart"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    루틴버디 데모 페이지 · 로컬 실행용 단일 프론트엔드 시안 · 더미 데이터 기반 커뮤니티형 생활 관리 랜딩+대시보드
+  </footer>
+
+  <script>
+    const heroMetrics = [
+      { value: "86%", label: "이번 주 생활 루틴 달성률" },
+      { value: "128명", label: "오늘 타임라인 참여 사용자" },
+      { value: "37건", label: "집중 중 자동 케어 알림" }
+    ];
+
+    const routines = [
+      { title: "아침 영양제 먹기", status: "완료", note: "공부 시작 전에 비타민과 오메가3를 챙기는 루틴입니다.", time: "08:10 완료", category: "건강 루틴", impact: "집중 지속력 유지" },
+      { title: "산책 20분", status: "미완료", note: "오후 집중력 저하 전에 햇빛과 가벼운 움직임을 확보합니다.", time: "17:30 추천", category: "리프레시", impact: "집중 회복" },
+      { title: "세탁기 돌리기", status: "미완료", note: "공부 블록 사이 5분 안에 시작할 수 있는 생활 미션입니다.", time: "20:00 예정", category: "집안 관리", impact: "주말 밀림 방지" },
+      { title: "생활용품 보충 확인", status: "완료", note: "세제, 물티슈, 생수 재고를 체크해 갑작스러운 부족을 막습니다.", time: "12:40 완료", category: "재고 관리", impact: "예상치 못한 외출 방지" }
+    ];
+
+    const schedules = [
+      { title: "다음 세탁 예정", detail: "집중 세션 종료 후 바로 실행할 수 있도록 저녁 블록 앞에 배치되었습니다.", time: "20:00", tag: "오늘", badge: "곧 시작", badgeClass: "status-soon" },
+      { title: "건조기 비우기", detail: "어제 돌린 빨래가 남아 있어 취침 전에 정리하면 루틴 누적률이 올라갑니다.", time: "21:10", tag: "오늘", badge: "필수", badgeClass: "status-pending" },
+      { title: "세제 보충 필요", detail: "남은 사용량이 15% 이하라 다음 세탁 전에 보충 권장이 표시되었습니다.", time: "내일 오전", tag: "알림", badge: "재고 부족", badgeClass: "status-pending" }
+    ];
+
+    const statusSignals = [
+      { title: "물 1.2L 남음", body: "오늘 목표 2L 중 아직 부족합니다. 저녁 공부 시작 전에 한 잔 더 권장합니다.", badge: "수분 보충", badgeClass: "status-soon" },
+      { title: "주방 타이머 대기 중", body: "세탁 예약 시작 10분 전입니다. 지금 누르면 공부 흐름을 거의 끊지 않고 처리할 수 있습니다.", badge: "자동 알림", badgeClass: "status-done" },
+      { title: "휴지 재고 2개", body: "이번 주 안에 생활용품 주문을 묶어서 처리하면 외출 횟수를 줄일 수 있습니다.", badge: "보충 체크", badgeClass: "status-pending" }
+    ];
+
+    const timeline = [
+      { user: "홍길동", action: "산책 20분 완료", time: "3분 전", detail: "도서관 앞 공원 한 바퀴 돌고 들어왔어요. 머리가 다시 맑아졌습니다.", thumb: "산책", emoji: "🚶", mood: "집중 회복" },
+      { user: "김민수", action: "영양제 챙기기 완료", time: "8분 전", detail: "오후 커피 대신 비타민 챙기고 물도 같이 마셨어요.", thumb: "영양제", emoji: "💊", mood: "건강 루틴" },
+      { user: "이지은", action: "세탁기 예약 시작", time: "14분 전", detail: "공부 타이머 끝나기 전에 딱 버튼만 눌렀습니다. 이런 게 진짜 편하네요.", thumb: "세탁", emoji: "🧺", mood: "생활 자동화" },
+      { user: "박서준", action: "생활용품 보충 체크", time: "21분 전", detail: "세제랑 생수 부족해서 메모해뒀어요. 이번 주말엔 안 까먹을 듯.", thumb: "보충", emoji: "📦", mood: "미리 대비" }
+    ];
+
+    const features = [
+      { icon: "생활", emoji: "🧺", title: "생활 관리", text: "빨래, 산책, 물건 보충, 영양제처럼 공부 중 놓치기 쉬운 생활 업무를 따로 챙겨줍니다." },
+      { icon: "기록", emoji: "📝", title: "루틴 기록", text: "하루의 생활 미션이 언제 어떻게 실행됐는지 남겨 꾸준함을 시각적으로 확인할 수 있습니다." },
+      { icon: "공유", emoji: "📡", title: "타임라인 공유", text: "커뮤니티 활동 피드로 서로의 생활 루틴 실천 장면을 보고 자연스럽게 참여하게 만듭니다." },
+      { icon: "동기", emoji: "🏅", title: "동기부여", text: "랭킹, 주간 통계, 실시간 완료 수를 통해 작은 생활 실천도 성취로 느껴지도록 설계했습니다." }
+    ];
+
+    const stats = [
+      { title: "이번 주 생활 미션 완료", value: "342회", text: "커뮤니티 전체 기준으로 이번 주 완료된 생활 미션 수입니다." },
+      { title: "가장 많이 실천한 사용자", value: "박서준", text: "7일 연속 생활 루틴을 유지하며 총 29개 미션을 완료했습니다." },
+      { title: "오늘 전체 산책 완료 수", value: "48회", text: "짧은 산책 루틴이 가장 높은 재참여율을 기록하고 있습니다." },
+      { title: "루틴 알림 응답률", value: "91%", text: "집중 세션 도중에도 부담 없는 생활 알림 덕분에 높은 응답률을 보였습니다." }
+    ];
+
+    const ranking = [
+      { rank: 1, name: "박서준", score: "29회", text: "영양제, 산책, 세탁 루틴을 가장 꾸준히 실천 중" },
+      { rank: 2, name: "이지은", score: "24회", text: "세탁과 물건 보충 체크에서 특히 강한 사용자" },
+      { rank: 3, name: "홍길동", score: "21회", text: "산책 루틴으로 오후 집중 리듬을 잘 유지함" },
+      { rank: 4, name: "김민수", score: "19회", text: "영양제와 수분 섭취 루틴 달성률이 매우 높음" }
+    ];
+
+    const progress = [
+      { label: "산책", value: 84 },
+      { label: "영양제", value: 91 },
+      { label: "세탁", value: 63 },
+      { label: "보충 확인", value: 72 }
+    ];
+
+    document.getElementById("heroMetrics").innerHTML = heroMetrics.map((item) => `<div class="metric"><strong>${item.value}</strong><span>${item.label}</span></div>`).join("");
+
+    document.getElementById("routineList").innerHTML = routines.map((item) => `
+      <article class="routine-item">
+        <div class="routine-top">
+          <div>
+            <strong>${item.title}</strong>
+            <p style="margin-top: 8px;">${item.note}</p>
+          </div>
+          <span class="status-pill ${item.status === "완료" ? "status-done" : "status-pending"}">${item.status}</span>
+        </div>
+        <div class="routine-meta">
+          <span class="chip">${item.time}</span>
+          <span class="chip">${item.category}</span>
+          <span class="chip">${item.impact}</span>
+        </div>
+      </article>
+    `).join("");
+
+    document.getElementById("scheduleList").innerHTML = schedules.map((item) => `
+      <article class="schedule-item">
+        <div class="schedule-top">
+          <div>
+            <strong>${item.title}</strong>
+            <p style="margin-top: 8px;">${item.detail}</p>
+          </div>
+          <span class="status-pill ${item.badgeClass}">${item.badge}</span>
+        </div>
+        <div class="schedule-row">
+          <div class="time-box">${item.time}</div>
+          <p>${item.tag} 생활 블록에 연결됨</p>
+          <span class="chip">자동 제안</span>
+        </div>
+      </article>
+    `).join("");
+
+    document.getElementById("statusCards").innerHTML = statusSignals.map((item) => `
+      <article class="schedule-item">
+        <div class="schedule-top">
+          <div>
+            <strong>${item.title}</strong>
+            <p style="margin-top: 8px;">${item.body}</p>
+          </div>
+          <span class="status-pill ${item.badgeClass}">${item.badge}</span>
+        </div>
+      </article>
+    `).join("");
+
+    document.getElementById("timelineList").innerHTML = timeline.map((item) => `
+      <article class="timeline-item">
+        <div class="avatar">${item.user.slice(0, 1)}</div>
+        <div>
+          <div class="timeline-meta">
+            <span class="timeline-user">${item.user}</span>
+            <span>${item.action}</span>
+            <span>•</span>
+            <span>${item.time}</span>
+            <span class="chip">${item.mood}</span>
+          </div>
+          <strong>${item.action}</strong>
+          <div class="timeline-comment">${item.detail}</div>
+        </div>
+        <div class="thumb" aria-label="${item.thumb}">${item.emoji}</div>
+      </article>
+    `).join("");
+
+    document.getElementById("miniFeed").innerHTML = timeline.slice(0, 2).map((item) => `
+      <article class="mini-feed-item">
+        <div class="avatar">${item.user.slice(0, 1)}</div>
+        <div>
+          <strong style="display: block;">${item.user}님</strong>
+          <p style="margin-top: 4px; color: var(--muted); font-size: 0.9rem;">${item.action}</p>
+        </div>
+        <span>${item.time}</span>
+      </article>
+    `).join("");
+
+    document.getElementById("featureList").innerHTML = features.map((item, index) => `
+      <article class="feature-card reveal delay-${Math.min(index, 4)}">
+        <div class="icon-wrap" aria-label="${item.icon}">${item.emoji}</div>
+        <strong>${item.title}</strong>
+        <p style="margin-top: 10px;">${item.text}</p>
+      </article>
+    `).join("");
+
+    document.getElementById("statList").innerHTML = stats.map((item, index) => `
+      <article class="stat-card reveal delay-${Math.min(index, 4)}">
+        <div class="stat-top">
+          <strong>${item.title}</strong>
+          <span class="chip">데모 데이터</span>
+        </div>
+        <div style="margin-top: 18px; font-size: 2rem; font-weight: 900; letter-spacing: -0.06em;">${item.value}</div>
+        <p style="margin-top: 10px;">${item.text}</p>
+      </article>
+    `).join("");
+
+    document.getElementById("rankingList").innerHTML = ranking.map((item) => `
+      <article class="ranking-item">
+        <div class="rank-badge">${item.rank}</div>
+        <div>
+          <strong>${item.name}</strong>
+          <p style="margin-top: 6px;">${item.text}</p>
+        </div>
+        <strong style="font-size: 1.15rem;">${item.score}</strong>
+      </article>
+    `).join("");
+
+    document.getElementById("progressChart").innerHTML = progress.map((item) => `
+      <div class="bar-row">
+        <strong style="font-size: 0.95rem;">${item.label}</strong>
+        <div class="bar"><span style="width: ${item.value}%;"></span></div>
+        <span style="color: rgba(255,255,255,0.72); font-weight: 700;">${item.value}%</span>
+      </div>
+    `).join("");
+  </script>
+</body>
+</html>
